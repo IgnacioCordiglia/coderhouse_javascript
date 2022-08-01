@@ -1,28 +1,18 @@
 class Partido {
 
-constructor(local, golesLocales, visitante, golesVisitantes,L_GF,V_GF,L_GC,V_GC,L_DG,V_DG,L_ptos,V_ptos,L_PJ,V_PJ){
+constructor(local, visitante, golesLocal, golesVisitante){
     this.local=local;
-    this.golesLocales=golesLocales;
     this.visitante=visitante;
-    this.golesVisitantes=golesVisitantes;
-    this.L_GF=L_GF;
-    this.V_GF=V_GF;
-    this.L_GC=L_GC;
-    this.V_GC=V_GC;
-    this.L_DG=L_DG;
-    this.V_DG=V_DG;
-    this.L_ptos=L_ptos;
-    this.V_ptos=V_ptos;
-    this.L_PJ=L_PJ;
-    this.V_PJ=V_PJ;
+    this.golesLocal=golesLocal;
+    this.golesVisitante=golesVisitante;
 }   
 
 getLocal(){
-    console.log("Estadisticas de "+this.local);
+    return this.local;
 }
 
 getVisitante(){
-    console.log("Estadisticas de "+this.visitante);
+    return this.visitante;
 }
 
 getGolesLocales(){
@@ -33,98 +23,176 @@ getGolesVisitante(){
     return this.golesVisitantes;
 }
 
-getL_ptos() {
-    console.log("Puntos: "+this.L_ptos);
-}
-
-getV_ptos() {
-    console.log("Puntos: "+this.V_ptos);
-}
-
-getL_GF() {
-    console.log("Goles a Favor: "+this.L_GF);
-}
-
-getV_GF() {
-    console.log("Goles a Favor: "+this.V_GF);
-}
-
-getL_GC() {
-    console.log("Goles en contra: "+this.L_GC);
-}
-
-getV_GC() {
-    console.log("Goles en contra: "+this.V_GC);
-}
-
-getL_DF(){
-    this.L_DF=this.L_GF-this.L_GC;
-    console.log("Diferencia de Gol: "+this.L_DF);
-}
-
-getV_DF(){
-    this.V_DF=this.V_GF-this.V_GC;
-    console.log("Diferencia de Gol: "+this.V_DF);
-}
-
-getL_PJ(){
-    console.log("Partidos jugados:"+this.L_PJ);
-}
-
-getV_PJ(){
-    console.log("Partidos jugados:"+this.V_PJ);
-}
-
+//tomando en cuenta el resultado del partido, actualiza los datos de los equipos participantes
 actualizar() {
-    if(this.golesLocales>this.golesVisitantes) {
-        this.L_ptos+=3;
+    if(this.golesLocal>this.golesVisitante) {
+        this.local.PG++;
+        this.visitante.PP++;
     }
-    else if (this.golesVisitantes>this.golesLocales) {
-            this.V_ptos+=3;
+    else if (this.golesVisitante>this.golesLocal) {
+            this.visitante.PG++;
+            this.local.PP++;
          }
-         else if (this.golesLocales==this.golesVisitantes) {
-            this.L_ptos+=1;
-            this.V_ptos+=1;
+         else if (this.golesLocal==this.golesVisitante) {
+            this.local.PE++;
+            this.visitante.PE++;
          }
 
-    this.L_GF+=this.golesLocales;
-    this.L_GC+=this.golesVisitantes;
-    this.V_GF+=this.golesVisitantes;
-    this.V_GC+=this.golesLocales;
-    this.L_DG=this.L_GF-this.L_GC;
-    this.V_DG=this.V_GF-this.V_GC;
-    this.L_PJ++;
-    this.V_PJ++;
+    this.local.GF+=+this.golesLocal;
+    this.visitante.GF+=+this.golesVisitante;
+    this.local.GC+=+this.golesVisitante;
+    this.visitante.GC+=+this.golesLocal;
+    this.local.PJ++;
+    this.visitante.PJ++;
 }
 }
 
+class Equipo {
+    constructor(nombre,PJ,PG,PE,PP,GF,GC) {
+        this.nombre=nombre;
+        this.PJ=PJ;
+        this.PG=PG;
+        this.PE=PE;
+        this.PP=PP;
+        this.GF=GF;
+        this.GC=GC;
+    }
+
+    getNombre(){
+        return this.nombre;
+    }
+
+    getPJ(){
+        return this.PJ;
+    }
+
+    getPG(){
+        return this.PG;
+    }
+
+    getPE(){
+        return this.PE;
+    }
+
+    getPP(){
+        return this.PP;
+    }
+
+    getPuntos(){
+        return this.PG*3+this.PE;
+    }
+
+    getGF(){
+        return this.GF;
+    }
+
+    getGC(){
+        return this.GC;
+    }
+
+    getDif(){
+        return this.GF-this.GC;
+    }
+}
+
+let AtlTucuman = new Equipo ("Atletico Tucuman",10,6,4,0,10,3);
+let Argentinos = new Equipo ("Argentinos Jrs.",10,6,2,2,15,9);
+let Racing = new Equipo ("Racing Club",10,5,3,2,16,8);
+let Gimnasia = new Equipo ("Gimnasia (LP)",10,5,3,2,10,6);
+let Union = new Equipo ("Union",10,5,3,2,18,16); 
+let GodoyCruz = new Equipo ("Godoy Cruz",10,5,2,3,12,8);
+let tablaPosiciones = [AtlTucuman,Argentinos,Racing,Gimnasia,Union,GodoyCruz];
 
 
+//funcion a la que se le da un nombre de un club y busca si este existe
+//si existe, retorna el equipo correspondiente, sino retorna null
+
+function find(name) {
+    let devolver=null;
+
+    for(i=0; i < tablaPosiciones.length;i++) {
+
+        if(tablaPosiciones[i].getNombre()==name) {
+            devolver = tablaPosiciones [i];
+            break;
+        }
+    }
+
+    return devolver;
+}
+
+//si al terminar el partido, el club tiene mas punto que quien esta arriba, sube un puesto, esto se repite hasta que no pueda avanzar mas
+//en caso de empate de puntos, se decide quien esta delante por diferencia de gol
+function actualizarTabla(equipo) {
+
+    for (var i=tablaPosiciones.indexOf(equipo);i>0;i--) {
+        if(tablaPosiciones[i].getPuntos()>tablaPosiciones[i-1].getPuntos()) {
+            swapArrayElements(tablaPosiciones,i,i-1);
+        }
+        else if(tablaPosiciones[i].getPuntos()==tablaPosiciones[i-1].getPuntos()) {
+                if(tablaPosiciones[i].getDif()>tablaPosiciones[i-1].getDif()) {
+                    swapArrayElements(tablaPosiciones,i,i-1);
+                }
+                else break;
+             }
+             else break;
+        }
+}
+
+var swapArrayElements = function(arr, indexA, indexB) {
+    var temp = arr[indexA];
+    arr[indexA] = arr[indexB];
+    arr[indexB] = temp;
+  };
 
 const solicitar = () => {
-    let local= prompt("Ingrese nombre del equipo local");
-    let visitante= prompt("Ingrese nombre del equipo visitante");
+    let localNombre= prompt("Ingrese nombre del equipo local");
+    let local= null;
+
+    local = find(localNombre);
+
+    let visitanteNombre= prompt("Ingrese nombre del equipo visitante");
+    let visitante=null;
+
+    visitante = find(visitanteNombre);
+
     let golesLocales = prompt("Ingrese los goles del equipo local: ");
     let golesVisitantes = prompt("Ingrese los goles del equipo visitante: ");
-    let partido = new Partido (local,golesLocales,visitante,golesVisitantes,0,0,0,0,0,0,0,0,0,0);
-    partido.actualizar();
-    //Estadisticas del local
-    partido.getLocal();
-    partido.getL_PJ();
-    partido.getL_ptos();
-    partido.getL_GF();
-    partido.getL_GC();
-    partido.getL_DF();
 
-    console.log(" ");
+    if(local == null || visitante == null || isNaN(golesLocales) || isNaN(golesVisitantes)) {
+        console.log("ERROR! Ingrese los datos de nuevo");
+        console.log ("ACLARACION: para esta version de prueba solo los primeros 6 equipos de la tabla fueron agregados y deben ser escritos tal y como estan en la tabla");
+        
+    }
+    else {
+        let partido = new Partido (local,visitante,golesLocales,golesVisitantes);
+        partido.actualizar();
+        actualizarTabla(local);
+        actualizarTabla(visitante);
+
+        console.log ("TABLA POSICIONES");
+        console.log ("");
+        for(i=0;i<tablaPosiciones.length;i++) {
+            console.log((i+1)+")"+tablaPosiciones[i].getNombre());
+        }
+
+    //Estadisticas del local
+        console.log((tablaPosiciones.indexOf(local)+1)+" | "+partido.local.getNombre()+
+        " | PJ: "+partido.local.getPJ()+" | PG: "+partido.local.getPG()+
+        " | PE: "+partido.local.getPE()+" | PP: "+partido.local.getPP()+
+        " | GF: "+partido.local.getGF()+" | GC: "+partido.local.getGC()+
+        " | DF: "+partido.local.getDif()+" | ptos: "+partido.local.getPuntos())
+
+
+        console.log(" ");
 
     //Estadisticas del visitante
-    partido.getVisitante();
-    partido.getV_PJ();
-    partido.getV_ptos();
-    partido.getV_GF();
-    partido.getV_GC();
-    partido.getV_DF();
+    console.log((tablaPosiciones.indexOf(visitante)+1)+" | "+partido.visitante.getNombre()+
+    " | PJ: "+partido.visitante.getPJ()+" | PG: "+partido.visitante.getPG()+
+    " | PE: "+partido.visitante.getPE()+" | PP: "+partido.visitante.getPP()+
+    " | GF: "+partido.visitante.getGF()+" | GC: "+partido.visitante.getGC()+
+    " | DF: "+partido.visitante.getDif()+" | ptos: "+partido.visitante.getPuntos())
+    }
 }
 
 solicitar();
