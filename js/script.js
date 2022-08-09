@@ -38,10 +38,10 @@ actualizar() {
             this.visitante.PE++;
          }
 
-    this.local.GF+=+this.golesLocal;
-    this.visitante.GF+=+this.golesVisitante;
-    this.local.GC+=+this.golesVisitante;
-    this.visitante.GC+=+this.golesLocal;
+    this.local.GF=parseInt(this.local.GF) + parseInt(this.golesLocal);
+    this.visitante.GF=parseInt(this.visitante.GF) + parseInt(this.golesVisitante);
+    this.local.GC=parseInt(this.local.GC) + parseInt(this.golesVisitante);
+    this.visitante.GC=parseInt(this.visitante.GC) + parseInt(this.golesLocal);
     this.local.PJ++;
     this.visitante.PJ++;
 }
@@ -79,7 +79,10 @@ class Equipo {
     }
 
     getPuntos(){
-        return this.PG*3+this.PE;
+        let puntos=0;
+        puntos+=+this.PG*3;
+        puntos+=+this.PE;
+        return puntos;
     }
 
     getGF(){
@@ -91,18 +94,27 @@ class Equipo {
     }
 
     getDif(){
-        return this.GF-this.GC;
+        let dif=0;
+        dif+=+this.GF;
+        dif+=-this.GC;
+        return dif;
     }
 }
 
-let AtlTucuman = new Equipo ("Atletico Tucuman",10,6,4,0,10,3);
-let Argentinos = new Equipo ("Argentinos Jrs.",10,6,2,2,15,9);
-let Racing = new Equipo ("Racing Club",10,5,3,2,16,8);
-let Gimnasia = new Equipo ("Gimnasia (LP)",10,5,3,2,10,6);
-let Union = new Equipo ("Union",10,5,3,2,18,16); 
-let GodoyCruz = new Equipo ("Godoy Cruz",10,5,2,3,12,8);
-let tablaPosiciones = [AtlTucuman,Argentinos,Racing,Gimnasia,Union,GodoyCruz];
+let equipos = document.getElementsByClassName("equipo"); 
+let PJs = document.getElementsByClassName("PJ");
+let PGs = document.getElementsByClassName("PG");
+let PEs = document.getElementsByClassName("PE");
+let PPs = document.getElementsByClassName("PP");
+let GFs = document.getElementsByClassName("GF");
+let GCs = document.getElementsByClassName("GC");
 
+let tablaPosiciones = [];
+
+for (i=0;i<equipos.length;i++) {
+    let equipo = new Equipo (equipos[i].innerText,PJs[i].textContent,PGs[i].textContent,PEs[i].textContent,PPs[i].textContent,GFs[i].textContent,GCs[i].textContent);
+    tablaPosiciones.push(equipo)
+}
 
 //funcion a la que se le da un nombre de un club y busca si este existe
 //si existe, retorna el equipo correspondiente, sino retorna null
@@ -110,11 +122,9 @@ let tablaPosiciones = [AtlTucuman,Argentinos,Racing,Gimnasia,Union,GodoyCruz];
 function find(name) {
     let devolver=null;
 
-    for(i=0; i < tablaPosiciones.length;i++) {
-
-        if(tablaPosiciones[i].getNombre()==name) {
-            devolver = tablaPosiciones [i];
-            break;
+    for(i=0;i<equipos.length;i++) {
+        if(equipos[i].innerText==name) {
+            devolver = tablaPosiciones[i];
         }
     }
 
@@ -146,23 +156,21 @@ var swapArrayElements = function(arr, indexA, indexB) {
   };
 
 const solicitar = () => {
-    let localNombre= prompt("Ingrese nombre del equipo local");
     let local= null;
-
+    let localNombre = document.getElementById("local").value;
     local = find(localNombre);
 
-    let visitanteNombre= prompt("Ingrese nombre del equipo visitante");
-    let visitante=null;
-
+    let visitante= null;
+    let visitanteNombre = document.getElementById("visitante").value;
     visitante = find(visitanteNombre);
 
-    let golesLocales = prompt("Ingrese los goles del equipo local: ");
-    let golesVisitantes = prompt("Ingrese los goles del equipo visitante: ");
+    let golesLocales = document.getElementById("golesLocal").value;
+    let golesVisitantes = document.getElementById("golesVisitante").value;
 
-    if(local == null || visitante == null || isNaN(golesLocales) || isNaN(golesVisitantes)) {
+    
+    if(local == visitante || local == null || visitante == null || golesLocales<0 || golesVisitantes<0 || isNaN(golesLocales) || isNaN(golesVisitantes)) {
         console.log("ERROR! Ingrese los datos de nuevo");
         console.log ("ACLARACION: para esta version de prueba solo los primeros 6 equipos de la tabla fueron agregados y deben ser escritos tal y como estan en la tabla");
-        
     }
     else {
         let partido = new Partido (local,visitante,golesLocales,golesVisitantes);
@@ -193,6 +201,8 @@ const solicitar = () => {
     " | GF: "+partido.visitante.getGF()+" | GC: "+partido.visitante.getGC()+
     " | DF: "+partido.visitante.getDif()+" | ptos: "+partido.visitante.getPuntos())
     }
+
 }
 
-solicitar();
+let boton = document.getElementById("boton");
+boton.addEventListener("click",solicitar);
