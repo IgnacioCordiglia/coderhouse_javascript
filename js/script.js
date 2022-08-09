@@ -48,8 +48,9 @@ actualizar() {
 }
 
 class Equipo {
-    constructor(nombre,PJ,PG,PE,PP,GF,GC) {
+    constructor(nombre,escudo,PJ,PG,PE,PP,GF,GC) {
         this.nombre=nombre;
+        this.escudo=escudo;
         this.PJ=PJ;
         this.PG=PG;
         this.PE=PE;
@@ -60,6 +61,10 @@ class Equipo {
 
     getNombre(){
         return this.nombre;
+    }
+
+    getEscudo(){
+        return this.escudo;
     }
 
     getPJ(){
@@ -80,8 +85,7 @@ class Equipo {
 
     getPuntos(){
         let puntos=0;
-        puntos+=+this.PG*3;
-        puntos+=+this.PE;
+        puntos = parseInt(this.PG)*3 + parseInt(this.PE);
         return puntos;
     }
 
@@ -102,18 +106,21 @@ class Equipo {
 }
 
 let equipos = document.getElementsByClassName("equipo"); 
+let escudos = document.getElementsByClassName("escudo");
 let PJs = document.getElementsByClassName("PJ");
 let PGs = document.getElementsByClassName("PG");
 let PEs = document.getElementsByClassName("PE");
 let PPs = document.getElementsByClassName("PP");
 let GFs = document.getElementsByClassName("GF");
 let GCs = document.getElementsByClassName("GC");
+let DFs = document.getElementsByClassName("DF");
+let ptos = document.getElementsByClassName("pto");
 
 let tablaPosiciones = [];
 
 for (i=0;i<equipos.length;i++) {
-    let equipo = new Equipo (equipos[i].innerText,PJs[i].textContent,PGs[i].textContent,PEs[i].textContent,PPs[i].textContent,GFs[i].textContent,GCs[i].textContent);
-    tablaPosiciones.push(equipo)
+    let equipo = new Equipo (equipos[i].innerText,escudos[i],PJs[i].textContent,PGs[i].textContent,PEs[i].textContent,PPs[i].textContent,GFs[i].textContent,GCs[i].textContent);
+    tablaPosiciones.push(equipo);
 }
 
 //funcion a la que se le da un nombre de un club y busca si este existe
@@ -125,6 +132,7 @@ function find(name) {
     for(i=0;i<equipos.length;i++) {
         if(equipos[i].innerText==name) {
             devolver = tablaPosiciones[i];
+            break;
         }
     }
 
@@ -133,17 +141,26 @@ function find(name) {
 
 //si al terminar el partido, el club tiene mas punto que quien esta arriba, sube un puesto, esto se repite hasta que no pueda avanzar mas
 //en caso de empate de puntos, se decide quien esta delante por diferencia de gol
+//en caso de empate de puntos y DF, se decide por goles a favor
+
 function actualizarTabla(equipo) {
 
     for (var i=tablaPosiciones.indexOf(equipo);i>0;i--) {
+        let escudo1 = null;
+        let escudo2 =null;
         if(tablaPosiciones[i].getPuntos()>tablaPosiciones[i-1].getPuntos()) {
             swapArrayElements(tablaPosiciones,i,i-1);
         }
         else if(tablaPosiciones[i].getPuntos()==tablaPosiciones[i-1].getPuntos()) {
                 if(tablaPosiciones[i].getDif()>tablaPosiciones[i-1].getDif()) {
                     swapArrayElements(tablaPosiciones,i,i-1);
+                    
                 }
-                else break;
+                else if(tablaPosiciones[i].getDif()==tablaPosiciones[i-1].getDif()) {
+                        if(tablaPosiciones[i].getGF()>tablaPosiciones[i-1].getGF()) {
+                            swapArrayElements(tablaPosiciones,i,i-1);
+                        }
+                    } else break;
              }
              else break;
         }
@@ -153,7 +170,7 @@ var swapArrayElements = function(arr, indexA, indexB) {
     var temp = arr[indexA];
     arr[indexA] = arr[indexB];
     arr[indexB] = temp;
-  };
+};
 
 const solicitar = () => {
     let local= null;
@@ -178,31 +195,18 @@ const solicitar = () => {
         actualizarTabla(local);
         actualizarTabla(visitante);
 
-        console.log ("TABLA POSICIONES");
-        console.log ("");
-        for(i=0;i<tablaPosiciones.length;i++) {
-            console.log((i+1)+")"+tablaPosiciones[i].getNombre());
-        }
-
-    //Estadisticas del local
-        console.log((tablaPosiciones.indexOf(local)+1)+" | "+partido.local.getNombre()+
-        " | PJ: "+partido.local.getPJ()+" | PG: "+partido.local.getPG()+
-        " | PE: "+partido.local.getPE()+" | PP: "+partido.local.getPP()+
-        " | GF: "+partido.local.getGF()+" | GC: "+partido.local.getGC()+
-        " | DF: "+partido.local.getDif()+" | ptos: "+partido.local.getPuntos())
-
-
-        console.log(" ");
-
-    //Estadisticas del visitante
-    console.log((tablaPosiciones.indexOf(visitante)+1)+" | "+partido.visitante.getNombre()+
-    " | PJ: "+partido.visitante.getPJ()+" | PG: "+partido.visitante.getPG()+
-    " | PE: "+partido.visitante.getPE()+" | PP: "+partido.visitante.getPP()+
-    " | GF: "+partido.visitante.getGF()+" | GC: "+partido.visitante.getGC()+
-    " | DF: "+partido.visitante.getDif()+" | ptos: "+partido.visitante.getPuntos())
-    }
-
+        for (i=0;i<tablaPosiciones.length;i++) {
+            equipos[i].innerText = tablaPosiciones[i].getNombre();
+            PJs[i].innerText = tablaPosiciones[i].getPJ();
+            PGs[i].innerText = tablaPosiciones[i].getPG();
+            PEs[i].innerText = tablaPosiciones[i].getPE();
+            PPs[i].innerText = tablaPosiciones[i].getPP();
+            GFs[i].innerText = tablaPosiciones[i].getGF();
+            GCs[i].innerText = tablaPosiciones[i].getGC();
+            DFs[i].innerText = tablaPosiciones[i].getDif();
+            ptos[i].innerText = tablaPosiciones[i].getPuntos();
+        } 
 }
-
+}
 let boton = document.getElementById("boton");
 boton.addEventListener("click",solicitar);
