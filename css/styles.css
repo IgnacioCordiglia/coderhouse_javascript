@@ -10,3 +10,7 @@ thead {
     width:30px;
     text-align: center;
 }
+
+#errorMsg {
+    color: red;
+}

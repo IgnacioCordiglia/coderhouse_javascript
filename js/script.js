@@ -183,9 +183,9 @@ const solicitar = () => {
 
     let golesLocales = document.getElementById("golesLocal").value;
     let golesVisitantes = document.getElementById("golesVisitante").value;
-
     
     if(local == visitante || local == null || visitante == null || golesLocales<0 || golesVisitantes<0 || isNaN(golesLocales) || isNaN(golesVisitantes)) {
+        document.getElementById('errorMsg').innerHTML = "<h4>ERROR! Ingrese los datos de nuevo</h4>";
         console.log("ERROR! Ingrese los datos de nuevo");
         console.log ("ACLARACION: para esta version de prueba solo los primeros 6 equipos de la tabla fueron agregados y deben ser escritos tal y como estan en la tabla");
     }
