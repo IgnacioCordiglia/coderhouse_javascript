@@ -1,131 +1,3 @@
-class Partido {
-
-constructor(local, visitante, golesLocal, golesVisitante){
-    this.local=local;
-    this.visitante=visitante;
-    this.golesLocal=golesLocal;
-    this.golesVisitante=golesVisitante;
-}   
-
-getLocal(){
-    return this.local;
-}
-
-getVisitante(){
-    return this.visitante;
-}
-
-getGolesLocal(){
-    return this.golesLocal;
-}
-
-getGolesVisitante(){
-    return this.golesVisitante;
-}
-
-//tomando en cuenta el resultado del partido, actualiza los datos de los equipos participantes
-actualizar() {
-    if(golesLocales!=null && golesVisitantes!=null) {
-        if(this.golesLocal>this.golesVisitante) {
-            this.visitante.PP++;
-            this.local.PG++;
-        }
-        else if (this.golesVisitante>this.golesLocal) {
-                this.visitante.PG++;
-                this.local.PP++;
-             }
-             else if (this.golesLocal==this.golesVisitante) {
-                        this.local.PE++;
-                        this.visitante.PE++;
-                  }
-
-        this.local.GF=parseInt(this.local.GF) + parseInt(this.golesLocal);
-        this.visitante.GF=parseInt(this.visitante.GF) + parseInt(this.golesVisitante);
-        this.local.GC=parseInt(this.local.GC) + parseInt(this.golesVisitante);
-        this.visitante.GC=parseInt(this.visitante.GC) + parseInt(this.golesLocal)
-        this.local.PJ++;
-        this.visitante.PJ++;
-    }
-}
-
-borrarPartido() {
-    if(this.golesLocal!=null && this.golesVisitante!=null) {
-        if(this.golesLocal>this.golesVisitante) {
-            this.visitante.PP--;
-            this.local.PG--;
-        }
-        else if (this.golesVisitante>this.golesLocal) {
-                this.visitante.PG--;
-                this.local.PP--;
-             }
-             else if (this.golesLocal==this.golesVisitante) {
-                        this.local.PE--;
-                        this.visitante.PE--;
-                  }
-
-        this.local.GF=parseInt(this.local.GF) - parseInt(this.golesLocal);
-        this.visitante.GF=parseInt(this.visitante.GF) - parseInt(this.golesVisitante);
-        this.local.GC=parseInt(this.local.GC) - parseInt(this.golesVisitante);
-        this.visitante.GC=parseInt(this.visitante.GC) - parseInt(this.golesLocal)
-        this.local.PJ--;
-        this.visitante.PJ--;
-    }
-}
-}
-
-class Equipo {
-    constructor(nombre,PJ,PG,PE,PP,GF,GC) {
-        this.nombre=nombre;
-        this.PJ=PJ;
-        this.PG=PG;
-        this.PE=PE;
-        this.PP=PP;
-        this.GF=GF;
-        this.GC=GC;
-    }
-
-    getNombre(){
-        return this.nombre;
-    }
-
-    getPJ(){
-        return this.PJ;
-    }
-
-    getPG(){
-        return this.PG;
-    }
-
-    getPE(){
-        return this.PE;
-    }
-
-    getPP(){
-        return this.PP;
-    }
-
-    getPuntos(){
-        let puntos=0;
-        puntos = parseInt(this.PG)*3 + parseInt(this.PE);
-        return puntos;
-    }
-
-    getGF(){
-        return this.GF;
-    }
-
-    getGC(){
-        return this.GC;
-    }
-
-    getDif(){
-        let dif=0;
-        dif+=+this.GF;
-        dif+=-this.GC;
-        return dif;
-    }
-}
-
 let equipos = document.getElementsByClassName("equipo");
 let PJs = document.getElementsByClassName("PJ");
 let PGs = document.getElementsByClassName("PG");
@@ -144,6 +16,7 @@ let cambiosLocales = [];
 let cambiosVisitantes = [];
 let partidos = [];
 let tablaPosiciones = [];
+
 
 for(i=0;i<locales.length;i++) {
     cambiosLocales.push("");
@@ -238,6 +111,7 @@ function actualizarTabla(equipo) {
     }
 }
 
+//metodo que cambie de lugar 2 objetos de un array entre sí
 var swapArrayElements = function(arr, indexA, indexB) {
     var temp = arr[indexA];
     arr[indexA] = arr[indexB];
@@ -249,20 +123,22 @@ const solicitar = () => {
     let num=null;
 
     for(i=0; i<locales.length;i++) {    
-
+        //si hubo algun cambio en el fixture
         if(golesLocales[i].value!=cambiosLocales[i] || golesVisitantes[i].value!=cambiosVisitantes[i]) {
+            //actualizo las listas
             cambiosLocales[i] = golesLocales[i].value;
             cambiosVisitantes[i] = golesVisitantes[i].value;
             
-            
+            //busco si ese partido ya se jugó
             for(j=0;j<partidos.length;j++) {
-
+                //si ya habia un resultado agregado, lo borra y pone el nuevo
                 if((locales[i].innerText == partidos[j].getLocal().getNombre() && visitantes[i].innerText == partidos[j].getVisitante().getNombre())) {
                     partidos[j].borrarPartido();
                     partidos.splice(j,1);
                     break;
                 }
             }    
+            //guardo la posicion del partido a agregar
             num=i;
             
             break;
@@ -276,13 +152,18 @@ const solicitar = () => {
         document.getElementById('errorMsg').innerHTML = "<h4>ERROR! Ingrese los datos de nuevo</h4>";
     }
     else {
+        //con los nombres de los equipos, encuentro el objeto con sus datos
         let local = find(locales[num].innerText);
         let visitante = find(visitantes[num].innerText);
+        //creo un nuevo partido con los datos
         let partido = new Partido (local,visitante,golesLocales[num].value,golesVisitantes[num].value);
+        //actualizo los datos de los clubes con el resultado del partido
         partido.actualizar();
+        //actualizo la posicion en la tabla de ambos equipos
         actualizarTabla(local);
         actualizarTabla(visitante);
 
+        //hago los cambios necesarios a la tabla
         for (i=0;i<tablaPosiciones.length;i++) {
             equipos[i].innerText = tablaPosiciones[i].getNombre();
             PJs[i].innerText = tablaPosiciones[i].getPJ();
@@ -294,10 +175,12 @@ const solicitar = () => {
             DFs[i].innerText = tablaPosiciones[i].getDif();
             ptos[i].innerText = tablaPosiciones[i].getPuntos();
         } 
+        //elimino el mensaje de error en caso de que este visible ya que no corresponde
         document.getElementById('errorMsg').innerHTML = "";
+        //guardo el partido
         sessionStorage.setItem('partidoJugado', partido);
         partidos.push(partido);
 }
 }
-
+//evento que hace que cada vez que se toca una tecla, se inicie solicitar()
 addEventListener("input",solicitar)
