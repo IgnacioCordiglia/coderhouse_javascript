@@ -148,10 +148,21 @@ const solicitar = () => {
 
 
     if(golesLocales[num].value<0 || golesVisitantes[num].value<0 || isNaN(golesLocales[i].value) || 
-       isNaN(golesVisitantes[i].value) || golesLocales[num].value=="" || golesVisitantes[num].value==""){
-        document.getElementById('errorMsg').innerHTML = "<h4>ERROR! Ingrese los datos de nuevo</h4>";
+       isNaN(golesVisitantes[i].value)){
+        Toastify({
+            text: "Error: uno de los valores es invalido",
+            duration: 3000,
+            close: true,
+            gravity: "bottom", // `top` or `bottom`
+            position: "left", // `left`, `center` or `right`
+            stopOnFocus: true, // Prevents dismissing of toast on hover
+            style: {
+              background: "red",
+            },
+          }).showToast();
     }
     else {
+        if(golesLocales[num].value!="" && golesVisitantes[num].value!="") {
         //con los nombres de los equipos, encuentro el objeto con sus datos
         let local = find(locales[num].innerText);
         let visitante = find(visitantes[num].innerText);
@@ -180,6 +191,7 @@ const solicitar = () => {
         //guardo el partido
         sessionStorage.setItem('partidoJugado', partido);
         partidos.push(partido);
+    }
 }
 }
 //evento que hace que cada vez que se toca una tecla, se inicie solicitar()
