@@ -194,5 +194,6 @@ const solicitar = () => {
     }
 }
 }
+
 //evento que hace que cada vez que se toca una tecla, se inicie solicitar()
 addEventListener("input",solicitar)

@@ -19,7 +19,7 @@
         <h2 class="text-center m-3 sombreado" data-aos="fade-down" data-aos-duration="100">Tabla Superliga Argentina</h2>
     </div>
     
-    <div class="row d-flex justify-content-center">
+    <div class="row d-flex justify-content-center col-12">
     
     <table cellpading="10" class="text-center col-9 my-2 table-striped">
         <!--Titulo de la tabla-->
@@ -838,9 +838,48 @@
     </div>
 </div>
 
+<!--FOOTERS-->
+<footer class="bg-dark text-center text-white pt-3">
+    <strong >Recibe noticias al instante</strong>
+    <!-- Grid container -->
+    <div class="container p-4">
+        
+        <form id="form" class="d-flex justify-content-center">
+            <div class="field">
+              <label for="mail">mail</label>
+              <input type="text" name="mail" id="mail" class="m-1">
+            </div>
+          
+            <input type="submit" id="button" class="" value="Send Email">
+        </form>
+          
+          <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+          
+          <script type="text/javascript">
+            emailjs.init('J5ZkwZwACbDfqCd04')
+          </script>
+    </div>
+  
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
+        <p class="font-weight-bold mb-0">Ignacio Cordiglia - 2022</p>
+    </div>
+  
+</footer>
+
 <script src="js/partido.js"></script>
+<script src="js/email.js"></script>
 <script src="js/equipo.js"></script>
 <script src="js/script.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+<script type="text/javascript">
+  emailjs.init('J5ZkwZwACbDfqCd04')
+</script>
+
+
+
 </body>
 </html>
